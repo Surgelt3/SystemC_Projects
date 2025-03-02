@@ -4,10 +4,11 @@
 
 SC_MODULE (AXISlave) {
     tlm_utils::simple_target_socket<AXISlave> socket;
-    uint32_t memory[256];
+    uint32_t memory[5120];
     int id;
 
     SC_CTOR(AXISlave) {
+        memset(memory, 0, sizeof(memory)); 
         socket.register_b_transport(this, &AXISlave::b_transport);
     }
 

@@ -14,6 +14,7 @@ SC_MODULE (AXIMaster) {
         tlm::tlm_generic_payload trans;
         sc_time delay = sc_time(10, SC_NS);
         uint32_t data = 42;
+
         trans.set_address(0x1000);
         trans.set_data_ptr(reinterpret_cast<unsigned char*>(&data));
         trans.set_data_length(4);
@@ -22,9 +23,9 @@ SC_MODULE (AXIMaster) {
         std::cout << "[Master: "<< id << "] Sending Write Request to 0x1000" << std::endl;
         socket->b_transport(trans, delay);
 
-        trans.set_address(0x2000);
+        trans.set_address(0x4000);
         trans.set_read();
-        std::cout << "[Master " << id << "] Sending Read Request to 0x2000" << std::endl;
+        std::cout << "[Master " << id << "] Sending Read Request to 0x4000" << std::endl;
         socket->b_transport(trans, delay);
 
         uint32_t read_data = *reinterpret_cast<uint32_t*>(trans.get_data_ptr());
