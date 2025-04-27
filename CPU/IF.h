@@ -2,44 +2,41 @@
 #define IF_H
 
 #include <systemc>
-#include <array>
-#include <fstream>
-#include <sstream>
+#include "IMEM.h"
 
 using namespace sc_core;
 using namespace sc_dt;
 
 
 SC_MODULE(IF){
-    sc_in<sc_uint<32>> address;
-    sc_out<sc_uint<32>> instr;
-
-    std::array<uint32_t, 256> mem;
+   
+    sc_in<bool> clk;
+    sc_in<sc_uint<32>> pc_in;
+    sc_out<sc_uint<32>> pc_out, instr, pc_plus4;
+    
+    
+    IMEM* instr_mem;
 
     SC_CTOR(IF){
-        SC_METHOD(read);
-        sensitive << address;
+        instr_mem = new IMEM("InstructionMemory");
+        instr_mem->address(pc_in);
+        instr_mem->instr(instr);
 
-        //preload();
+        SC_METHOD(fetch);
+        sensitive << clk.pos(); 
     }
 
-    void read(){
-        uint32_t addr = address.read();
-        instr.write(mem[addr / 4]);
+    void fetch() {
+        pc_out.write(pc_in.read());
+        pc_plus4.write(inc_pc(pc_in.read()));
     }
 
-    void preload(){
-        std::string filename = "instructions.txt";
-        std::ifstream infile(filename);
-        std::string line;
-        uint32_t addr =0;
-        
-        while(std::getline(infile, line) && addr < mem.size()){
-            std::stringstream ss;
-            ss << std::hex << line;
-            ss >> mem[addr++];
-        }
-        std::cout << "IMEM Loaded " << addr << " instructions from " << filename << std::endl;
+    sc_uint<32> inc_pc(sc_uint<32> pc) {
+        return pc + 4;
+    }
+
+    ~IF() {
+        delete instr_mem;
     }
 
 };
