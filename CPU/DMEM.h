@@ -13,7 +13,7 @@ SC_MODULE(DMEM){
     sc_in<sc_int<32>> WD, A;
     sc_out<sc_int<32>> RD;
 
-    sc_uint<32> mem[1024];
+    sc_int<32> mem[1024];
 
     SC_CTOR(DMEM){
 

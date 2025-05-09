@@ -68,7 +68,7 @@ SC_MODULE(CPU){
         instr_d->clk(clk);
         instr_d->instr(instr_D);
         instr_d->WD3(ResultW);
-        instr_d->WE(RegWriteW);
+        instr_d->opW(opW);
         instr_d->AW(RdW);
         instr_d->RD1(RD1D);
         instr_d->RD2(RD2D);
@@ -81,7 +81,7 @@ SC_MODULE(CPU){
         instr_ex = new EX("EX_Stage");
         instr_ex->RD1(RD1E);
         instr_ex->RD2(RD2E);
-        instr_ex->Imm(RD2E);
+        instr_ex->Imm(ImmExtE);
         instr_ex->PC(PCE);
         instr_ex->op(opE);
         instr_ex->Zero(ZeroE);
@@ -112,6 +112,9 @@ SC_MODULE(CPU){
         instr_wb->result_out(ResultW);
         instr_wb->PCout(PCW);    
 
+        SC_METHOD(get_PCSrc);
+        sensitive << opE << ZeroE;
+
 
     }    
 
@@ -130,31 +133,35 @@ SC_MODULE(CPU){
         if(reset.read()){
             pc_in.write(0);
         }else{
-            pc_in.write(PCW);
+            pc_in.write(PCW.read());
         }
+        std::cout << "PC: " << pc_in.read() << "\n";
     }
 
     void ff_id(){
         instr_D.write(instr.read());
         PCD.write(pc_out.read());
         PCPlus4D.write(pc_plus4.read());
+        std::cout << "PCD: " << PCD.read() << " instrD: " << instr_D.read() << std::hex << "\n";
     }
 
     void ff_ex(){
         instr_E.write(instr_D.read());
         PCE.write(PCD.read());
-        PCPlus4E.write(PCPlus4D);
+        PCPlus4E.write(PCPlus4D.read());
         RD1E.write(RD1D.read());
         RD2E.write(RD2D.read());
         ImmExtE.write(ImmExtD.read());
-        opE.write(opD);
+        opE.write(opD.read());
+
+        std::cout << "InstrE: " << instr_E.read() << " RD1E: " << RD1E.read() << " RD2E: " << RD2E.read() << " ImmExtE: " << ImmExtE.read() << " opE: " << opE.read() << std::hex << "\n";
     }
 
     void ff_ma(){
         instr_M.write(instr_E.read());
         PCPlus4M.write(PCPlus4E.read());
         ALUResultM.write(ALUResultE.read());
-        WriteDataM.write(RD2E);
+        WriteDataM.write(RD2E.read());
         opM.write(opE.read());
     }
 
@@ -162,7 +169,7 @@ SC_MODULE(CPU){
         ALUResultW.write(ALUResultM.read());
         ReadDataW.write(ReadDataM.read());
         PCPlus4W.write(static_cast<sc_int<32>>(PCPlus4M.read().to_int()));
-        opW.write(opM);
+        opW.write(opM.read());
         RdW.write(instr_M.read().range(11, 7));
     }
 

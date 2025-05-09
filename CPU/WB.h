@@ -18,13 +18,16 @@ SC_MODULE(WB) {
     sc_signal<sc_uint<2>> ResultSrc;
 
     SC_CTOR(WB) {
+        SC_METHOD(get_ResultSrc);
+        sensitive << op;
+    
         SC_METHOD(select_result);
         sensitive << ResultSrc << ALU_Result << ReadData << PC_Plus4W;
-
+    
         SC_METHOD(select_pc);
         sensitive << PCSrc << PCTarget << PC_Plus4F;
     }
-
+    
     void get_ResultSrc(){
         switch(op.read()){
             case LW: ResultSrc.write(0b01); break;

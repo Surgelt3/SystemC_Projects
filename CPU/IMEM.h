@@ -17,6 +17,9 @@ SC_MODULE(IMEM){
     std::array<uint32_t, 256> mem;
 
     SC_CTOR(IMEM){
+
+        SC_METHOD(preload);
+
         SC_METHOD(read);
         sensitive << address;
 

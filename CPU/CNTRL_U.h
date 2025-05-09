@@ -4,6 +4,8 @@
 #include <systemc>
 #include "defs.h"
 
+using namespace sc_core;
+using namespace sc_dt;
 
 
 SC_MODULE(CNTRL_U){
@@ -78,9 +80,15 @@ SC_MODULE(CNTRL_U){
                     case 0b110: return BLTU;
                     case 0b111: return BGEU;
                 }
-            case 0b1101111:
-                ext_out.write((sc_int<32>) (sc_int<21>) sc_bv<21>((instruction[31], instruction.range(19, 12), instruction[20], instruction.range(30, 21), sc_bv<1>("0"))));            
-                return JAL;
+            case 0b1101111: {
+                sc_uint<20> payload = (instruction[31], 
+                    instruction.range(19,12), 
+                    instruction[20], 
+                    instruction.range(30,21));
+                sc_int<32> imm = (sc_int<32>)( (sc_int<21>)payload << 1 );
+                ext_out.write(imm);                
+                return JAL; 
+            }
             case 0b1100111:
                 ext_out.write((sc_int<32>) (sc_int<12>) sc_bv<12>(instruction.range(31, 20)));
                 switch(funct3){

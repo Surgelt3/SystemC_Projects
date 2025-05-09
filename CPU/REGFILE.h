@@ -20,9 +20,10 @@ SC_MODULE(REGFILE){
     SC_CTOR(REGFILE){
         for (int i = 0; i < 32; i++) regs[i] = 0; 
         SC_METHOD(read_reg);
-        SC_METHOD(write_reg);
-
         sensitive << clk.pos();
+        SC_METHOD(write_reg);
+        sensitive << clk.pos();
+
     }
 
     void read_reg(){
@@ -36,6 +37,15 @@ SC_MODULE(REGFILE){
         if (WE3.read() && A3.read() != 0){
             regs[A3.read()] = WD3.read();
         }
+        print_registers();
+    }
+
+    void print_registers() {
+        std::cout << "Register file at time " << sc_time_stamp() << ":\n";
+        for (int i = 0; i < 9; ++i) {
+            std::cout << "x" << i << ": " << regs[i] << "\n";
+        }
+        std::cout << "-------------------------\n";
     }
 
 
