@@ -7,9 +7,11 @@ using namespace sc_dt;
 using namespace std;
 
 SC_MODULE(EX_Testbench) {
-    sc_signal<sc_uint<32>> RD1_sig, RD2_sig, Imm_sig, PC_sig;
+    sc_signal<sc_uint<32>> PC_sig;
+    sc_signal<sc_int<32>> RD1_sig, RD2_sig, Imm_sig;
     sc_signal<Ops> op_sig;
-    sc_signal<sc_uint<32>> ALUResult_sig, PCTarget_sig;
+    sc_signal<sc_uint<32>> PCTarget_sig;
+    sc_signal<sc_int<32>> ALUResult_sig;
     sc_signal<bool> Zero_sig;
 
     EX* ex_stage;

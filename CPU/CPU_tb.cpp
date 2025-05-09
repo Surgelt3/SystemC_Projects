@@ -23,7 +23,7 @@ SC_MODULE(TopTB) {
         reset = false;
 
         // let the core run for 200 ns
-        wait(200, SC_NS);
+        wait(100, SC_NS);
         sc_stop();
     }
 };
