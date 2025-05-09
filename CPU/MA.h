@@ -3,6 +3,7 @@
 
 #include <systemc>
 #include "DMEM.h"
+#include "defs.h"
 
 using namespace sc_core;
 using namespace sc_dt;
@@ -10,15 +11,20 @@ using namespace sc_dt;
 SC_MODULE(MA){
 
     sc_in<bool> clk;
-    sc_in<sc_uint<1>> WE;
-    sc_in<sc_uint<32>> A, WD;
-    sc_out<sc_uint<32>> RD;
+    sc_in<Ops> op;
+    sc_in<sc_int<32>> A, WD;
+    sc_out<sc_int<32>> RD;
 
+    sc_signal<bool> WE;
 
-    *DMEM data_mem;
+    DMEM* data_mem;
 
 
     SC_CTOR(MA){
+
+        SC_METHOD(get_WE);
+        sensitive << op;
+
         data_mem = new DMEM("DataMemory");
         data_mem->clk(clk);
         data_mem->WE(WE);
@@ -28,6 +34,16 @@ SC_MODULE(MA){
 
         sensitive << clk.pos();
     }
+
+    void get_WE(){
+        if (op.read() == SW){
+            WE.write(true);
+        } else{
+            WE.write(false);
+        }
+    }
+
+
 
 };
 

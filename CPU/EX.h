@@ -12,28 +12,32 @@ using namespace sc_dt;
 
 SC_MODULE(EX){
 
-    sc_in<bool> clk;
-    sc_in<sc_uint<32>> RD1, RD2;
-    sc_in<sc_uint<32>> Imm, PC;
-    sc_in<sc_uint<1>> Zero;
+    sc_in<sc_int<32>> RD1, RD2, Imm;
+    sc_in<sc_uint<32>> PC;
     sc_in<Ops> op;
 
-    sc_out<sc_uint<32>> ALUResult, PCTarget;
-    sc_signal<sc_uint<32>> alu_in2;
+    sc_out<bool> Zero;
+    sc_out<sc_int<32>> ALUResult;
+    sc_out<sc_uint<32>> PCTarget;
+    sc_signal<sc_int<32>> alu_in2;
+    
 
     ALU* alu;
 
     SC_CTOR(EX){
+
+        SC_METHOD(select_alu_input);
+        sensitive << alu_in2 << RD2 << op;
+
         alu = new ALU("Alu");
         alu->in1(RD1);
         alu->in2(alu_in2);
+        alu->op(op);
         alu->out(ALUResult);
         alu->zero(Zero);
 
-        SC_METHOD(select_alu_input);
-
         SC_METHOD(PCPlus);
-        sensitive << clk.pos();
+        sensitive << Imm << PC;
     }
 
     bool imm_op(Ops op){

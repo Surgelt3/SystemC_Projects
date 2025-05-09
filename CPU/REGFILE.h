@@ -10,13 +10,15 @@ SC_MODULE(REGFILE){
 
     sc_in<bool> clk;
 
-    sc_in<sc_uint<32>> A1, A2, A3, WE3, WD3;
-    sc_out<sc_uint<32>> RD1, RD2;
+    sc_in<sc_uint<5>> A1, A2, A3;
+    sc_in<bool> WE3;
+    sc_in<sc_int<32>> WD3;
+    sc_out<sc_int<32>> RD1, RD2;
 
-    sc_uint<32> regs[32];
-
+    sc_int<32> regs[32];
 
     SC_CTOR(REGFILE){
+        for (int i = 0; i < 32; i++) regs[i] = 0; 
         SC_METHOD(read_reg);
         SC_METHOD(write_reg);
 
@@ -31,7 +33,7 @@ SC_MODULE(REGFILE){
     }
 
     void write_reg(){
-        if (WE3.read()){
+        if (WE3.read() && A3.read() != 0){
             regs[A3.read()] = WD3.read();
         }
     }

@@ -1,3 +1,6 @@
+#ifndef DEFS_H
+#define DEFS_H
+
 enum ALUOps {
     ALU_ADD,
     ALU_SUB,
@@ -41,3 +44,5 @@ enum Ops {
     JAL,
     JALR
 };
+
+#endif

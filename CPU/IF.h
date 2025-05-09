@@ -13,6 +13,7 @@ SC_MODULE(IF){
     sc_in<bool> clk;
     sc_in<sc_uint<32>> pc_in;
     sc_out<sc_uint<32>> pc_out, instr, pc_plus4;
+
     
     
     IMEM* instr_mem;
@@ -23,8 +24,9 @@ SC_MODULE(IF){
         instr_mem->instr(instr);
 
         SC_METHOD(fetch);
-        sensitive << clk.pos(); 
+        sensitive << pc_in; 
     }
+
 
     void fetch() {
         pc_out.write(pc_in.read());

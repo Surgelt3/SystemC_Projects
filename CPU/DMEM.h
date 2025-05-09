@@ -9,9 +9,9 @@ using namespace sc_dt;
 SC_MODULE(DMEM){
 
     sc_in<bool> clk;
-    sc_in<sc_uint<1>> WE;
-    sc_in<sc_uint<32>> A, WD;
-    sc_out<sc_uint<32>> RD;
+    sc_in<bool> WE;
+    sc_in<sc_int<32>> WD, A;
+    sc_out<sc_int<32>> RD;
 
     sc_uint<32> mem[1024];
 
